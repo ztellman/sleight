@@ -1,6 +1,6 @@
 A library for whole-program transformation.
 
-## License
+h3. License
 
 Copyright (C) 2012 Zachary Tellman
 
