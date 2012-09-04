@@ -1,0 +1,7 @@
+A library for whole-program transformation.
+
+## License
+
+Copyright (C) 2012 Zachary Tellman
+
+Distributed under the Eclipse Public License, the same as Clojure.
