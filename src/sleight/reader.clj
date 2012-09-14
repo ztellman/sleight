@@ -23,7 +23,7 @@
 
 (def ^:dynamic *newlines* nil)
 
-(def hijacked-printer
+(def switched-printer
   (delay
     (alter-var-root #'clojure.core/pr-on
       (fn [pr-on]
@@ -103,7 +103,7 @@
 ;;;
 
  (defn transform-reader [transform r]
-   (let [_ @hijacked-printer ;; prime the modified printer
+   (let [_ @switched-printer ;; prime the switched printer
          newlines (newline-generator)]
      (->> r
        reader->forms

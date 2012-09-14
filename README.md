@@ -7,7 +7,7 @@ Sleight allows a transform function to be applied to all forms before they're re
 
 Stay posted for updates.
 
-h3. License
+## License
 
 Copyright (C) 2012 Zachary Tellman
 

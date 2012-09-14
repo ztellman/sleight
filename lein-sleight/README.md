@@ -1,25 +1,44 @@
-# lein-sleight
+A plugin for whole-program transformations via sleight.
 
-A Leiningen plugin to do many wonderful things.
+### Usage
 
-## Usage
+This plugin is only compatible with Leiningen 2.X.
 
-FIXME: Use this for user-level plugins:
+To use in all projects, add `[lein-sleight "0.1.0"]` to the `:plugins` vector of your `:user` profile in `~/.lein/profiles.clj`.  To use for a specific project, add `[lein-sleight "0.1.0"]` to the `:plugins` vector in `project.clj`.
 
-Put `[lein-sleight "0.1.0-SNAPSHOT"]` into the `:plugins` vector of your
-`:user` profile, or if you are on Leiningen 1.x do `lein plugin install
-lein-sleight 0.1.0-SNAPSHOT`.
+First, define a transform in your project or one of its dependencies.
 
-FIXME: Use this for project-level plugins:
+```clj
+(sleight.core/def-transform reverse-everything
+  :pre #(println "Get ready for some confusion...")
+  :transform reverse)
+```
 
-Put `[lein-sleight "0.1.0-SNAPSHOT"]` into the `:plugins` vector of your project.clj.
+Then, in your `project.clj`, add something like this:
 
-FIXME: and add an example usage that actually makes sense:
+```clj
+(project your-project "1.0.0"
+  :sleight {:default {:transforms [a.namespace/reverse-everything]}
+            :partial {:transforms [a.namespace/reverse-everything]
+	                  :namespaces ["another.namespace*"]}})
+```
 
-    $ lein sleight
+The `:transforms` key maps onto a list of transforms, which are applied left to right.  The `:namespaces` key maps onto a list of namespace filters, which confines the transformation to namespaces which match one of the filters.
 
-## License
+The `lein sleight` is not a standalone task, it's meant to modify other tasks.  For instance, if we want to apply our transform to code while testing, we'd run:
 
-Copyright © 2012 FIXME
+```
+lein sleight test
+```
+
+Since we haven't given a selector before the `test` task, the `:default` transform is selected.  To specify the `:partial` transform, we'd run:
+
+```
+lein sleight :partial test
+```
+
+### License
+
+Copyright © 2012 Zachary Tellman
 
 Distributed under the Eclipse Public License, the same as Clojure.
