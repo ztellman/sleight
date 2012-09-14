@@ -78,7 +78,6 @@
           (RT/lastModified clj-url clj-file))))))
 
 (defn load* [transform script-base]
-  (prn "rt-load*" script-base)
   (let [class-file (str script-base RT/LOADER_SUFFIX ".class")
         clj-file (str script-base ".clj")
         loaded? (when (load-class? class-file clj-file)

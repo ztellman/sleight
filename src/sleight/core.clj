@@ -12,11 +12,11 @@
 
 ;;; adapted from clojure.core
 
-(def check-cyclic-dependency #'clojure.core/check-cyclic-dependency)
-(def root-resource #'clojure.core/root-resource)
-(def root-directory #'clojure.core/root-directory)
+(def ^:private check-cyclic-dependency #'clojure.core/check-cyclic-dependency)
+(def ^:private root-resource #'clojure.core/root-resource)
+(def ^:private root-directory #'clojure.core/root-directory)
 
-(defn load*
+(defn- load*
   [transform & paths]
   (doseq [^String path paths]
     (let [^String path (if (.startsWith path "/")
@@ -27,31 +27,22 @@
         (when-not (= path (first pending-paths))
           (with-bindings {#'clojure.core/*pending-paths* (conj pending-paths path)}
             (rt/load* transform (.substring path 1))))))))
-;;;
 
-#_(defn hijack [{:keys [pre post transform]}]
-  (when pre
-    (pre))
+(defn hijack-reader
+  [& {:keys [pre post transform]}]
+
+  (when pre (pre))
+
+  (when transform
+    (alter-var-root #'clojure.core/load
+      (constantly (partial load* transform))))
+
   (when post
     (.addShutdownHook (Runtime/getRuntime)
-      (doto (Thread. #(post))
-        (.setName "sleight shutdown hook"))))
-  (when transform
-    (alter-var-root #'clojure.core/eval
-      (fn [eval]
-        (fn [form]
-          (prn "eval"
-            form)
-          (eval (transform form)))))
-    (alter-var-root #'clojure.core/load-reader
-      (fn [load-reader]
-        (fn [form]
-          (prn "load-reader" form)
-          (load-reader (transform form)))))
-    )
-  )
+      (Thread. post))))
+
+(defmacro def-transform [name & {:as options}]
+  `(def ~name options))
 
 
-(defn hijack [_]
-  (alter-var-root #'clojure.core/load
-    (constantly (partial load* identity))))
+
