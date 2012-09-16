@@ -59,7 +59,7 @@
                 
                 :else
                 x)]
-       (if (instance? clojure.lang.IMeta x*)
+       (if (instance? clojure.lang.IObj x*)
          (with-meta x* (merge (meta x) (meta x*)))
          x*))))
 
