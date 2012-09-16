@@ -49,7 +49,7 @@
                                                          (walk-exprs (val %))))
                 
                 (vector? x)
-                (handle-expr #'clojure.core/vector #(vector (map walk-exprs %)))
+                (handle-expr #'clojure.core/vector #(vec (map walk-exprs %)))
                 
                 (map? x)
                 (handle-expr #'clojure.core/hash-map #(into {} (map walk-exprs %)))

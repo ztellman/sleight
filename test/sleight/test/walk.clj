@@ -34,6 +34,12 @@
       (merge expr-handlers {#'+ increment-handler})
       x)))
 
+(defn run-test-roundtrip [x]
+  (is (= x (walk-exprs expr-handlers x))))
+
+(deftest test-roundtrip
+  (run-test-roundtrip `(concat [[1] #{2} {3 4}])))
+
 (deftest test-walk-exprs
 
   ;; x = y * 2
