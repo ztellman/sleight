@@ -31,7 +31,7 @@
 (defn eval* [x]
   (eval
     (walk-exprs
-      (merge default-walk-handlers {#'+ increment-handler})
+      (merge expr-handlers {#'+ increment-handler})
       x)))
 
 (deftest test-walk-exprs

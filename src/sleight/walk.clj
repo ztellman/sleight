@@ -30,35 +30,38 @@
     (and symbol? (resolve x))
     x))
 
-(declare default-walk-handlers)
+(declare expr-handlers)
 
 (defn walk-exprs
   ([x]
-     (walk-exprs default-walk-handlers x))
+     (walk-exprs expr-handlers x))
   ([handlers x]
      (let [handle-expr #(handle-expr handlers %1 %2 x)
-           walk-exprs (partial walk-exprs handlers)]
-       (cond
-      
-         (walkable? x)
-         (doall (handle-expr (term-descriptor (first x)) #(map walk-exprs %)))
-
-         (map-entry? x)
-         (handle-expr #'sleight.walk/map-entry #(clojure.lang.MapEntry.
-                                                  (walk-exprs (key %))
-                                                  (walk-exprs (val %))))
-      
-         (vector? x)
-         (handle-expr #'clojure.core/vector #(vector (map walk-exprs %)))
-      
-         (map? x)
-         (handle-expr #'clojure.core/hash-map #(into {} (map walk-exprs %)))
-      
-         (set? x)
-         (handle-expr #'clojure.core/hash-set #(set (map walk-exprs %)))
-
-         :else
-         x))))
+           walk-exprs (partial walk-exprs handlers)
+           x* (cond
+           
+                (walkable? x)
+                (doall (handle-expr (term-descriptor (first x)) #(map walk-exprs %)))
+                
+                (map-entry? x)
+                (handle-expr #'sleight.walk/map-entry #(clojure.lang.MapEntry.
+                                                         (walk-exprs (key %))
+                                                         (walk-exprs (val %))))
+                
+                (vector? x)
+                (handle-expr #'clojure.core/vector #(vector (map walk-exprs %)))
+                
+                (map? x)
+                (handle-expr #'clojure.core/hash-map #(into {} (map walk-exprs %)))
+                
+                (set? x)
+                (handle-expr #'clojure.core/hash-set #(set (map walk-exprs %)))
+                
+                :else
+                x)]
+       (if (instance? clojure.lang.IMeta x*)
+         (with-meta x* (merge (meta x) (meta x*)))
+         x*))))
 
 ;;;
 
@@ -89,7 +92,7 @@
     (let-bindings-handler handlers (second x))
     (map (partial walk-exprs handlers) (drop 2 x))))
 
-(def default-walk-handlers
+(def expr-handlers
   {#'defn fn-handler
    #'fn fn-handler
    'fn* fn-handler
