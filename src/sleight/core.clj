@@ -68,7 +68,8 @@
 (defn switch-reader
   [{:keys [pre post transform]}]
 
-  (when pre (pre))
+  (when pre
+    (pre))
 
   (when transform
 

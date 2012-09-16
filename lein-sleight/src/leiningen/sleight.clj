@@ -58,14 +58,16 @@
 
 (defn sleight
   [project & args]
-  (let [[transform-name task args] (arguments args)]
+  (let [[transform-name task args] (arguments args)
+        transform (-> project
+                    :sleight
+                    add-built-ins
+                    (get (keyword transform-name)))]
 
     ;; make sure the reader switch occurs in the sub-task
-    (switch-eval-in-project
-      (-> project
-        :sleight
-        add-built-ins
-        (get (keyword transform-name))))
+    (if transform
+      (switch-eval-in-project transform)
+      (println (str "No sleight transform defined for " (keyword transform-name) ", skipping.")))
 
     ;; run the sub-task
     (apply (resolve-task task) project args)))

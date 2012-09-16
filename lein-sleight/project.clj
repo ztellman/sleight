@@ -1,4 +1,4 @@
-(defproject lein-sleight "0.1.0"
+(defproject lein-sleight "0.2.0-SNAPSHOT"
   :description "A plugin for whole-program transformations via sleight"
   :url "http://example.com/FIXME"
   :license {:name "Eclipse Public License"
