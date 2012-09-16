@@ -27,7 +27,7 @@
 
 (defn- term-descriptor [x]
   (or
-    (and symbol? (resolve x))
+    (and (symbol? x) (resolve x))
     x))
 
 (declare expr-handlers)
