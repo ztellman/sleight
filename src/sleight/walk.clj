@@ -101,3 +101,14 @@
    'let* let-handler
    'loop* let-handler})
 
+;;;
+
+(defn macroexpand-all [x]
+  (walk-exprs
+    (fn handlers [_]
+      (fn [_ x]
+        (let [x (macroexpand x)]
+          (if-let [handler (expr-handlers (first x))]
+            (handler handlers x)
+            (map macroexpand-all x)))))
+    x))
