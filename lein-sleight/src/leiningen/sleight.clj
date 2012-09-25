@@ -21,7 +21,7 @@
     (fn [dependencies]
       (if (->> dependencies (map first) (some #{'sleight}))
         dependencies
-        (conj dependencies ['sleight "0.1.0"])))))
+        (conj dependencies ['sleight "0.2.0-SNAPSHOT"])))))
 
 (defn switch-form [transforms namespaces]
   `(sleight.core/switch-reader

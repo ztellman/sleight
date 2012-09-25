@@ -4,13 +4,17 @@ A plugin for whole-program transformations via sleight.
 
 This plugin is only compatible with Leiningen 2.X.
 
-To use in all projects, add `[lein-sleight "0.1.0"]` to the `:plugins` vector of your `:user` profile in `~/.lein/profiles.clj`.  To use for a specific project, add `[lein-sleight "0.1.0"]` to the `:plugins` vector in `project.clj`.
+To use in all projects, add `[lein-sleight "0.2.0-SNAPSHOT"]` to the `:plugins` vector of your `:user` profile in `~/.lein/profiles.clj`.  
+
+To use for a specific project, add `[lein-sleight "0.2.0-SNAPSHOT"]` to the `:plugins` vector in `project.clj`.
+
+---
 
 First, define a transform in your project or one of its dependencies.
 
 ```clj
 (sleight.core/def-transform reverse-everything
-  :pre #(println "Get ready for some confusion...")
+  :pre (fn [] (println "Get ready for some confusion..."))
   :transform reverse)
 ```
 

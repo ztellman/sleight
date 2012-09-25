@@ -33,6 +33,11 @@
 (declare expr-handlers)
 
 (defn walk-exprs
+  "Walks a code form, visiting only valid expressions.  The 'handlers' parameter is a function
+   which takes the first element of the expression (which, if it can be resolved, is a var), and
+   returns a function which takes the handlers parameter and the expression.
+
+   By default, this is 'expr-handlers', which is a simple map of vars and symbols onto functions."
   ([x]
      (walk-exprs expr-handlers x))
   ([handlers x]
@@ -103,12 +108,36 @@
 
 ;;;
 
-(defn macroexpand-all [x]
+(defn postwalk-exprs
+  [f x]
+  (walk-exprs
+    (fn handlers [term]
+      (fn [_ x]
+        (let [x* (if-let [handler (expr-handlers term)]
+                   (handler handlers x)
+                   (map #(postwalk-exprs f %) x))]
+          (f x*))))
+    x))
+
+(defn prewalk-exprs
+  [f x]
   (walk-exprs
     (fn handlers [_]
       (fn [_ x]
-        (let [x (macroexpand x)]
-          (if-let [handler (expr-handlers (first x))]
-            (handler handlers x)
-            (map macroexpand-all x)))))
+        (let [x* (f x)]
+          (if-let [handler (-> x* first term-descriptor expr-handlers)]
+            (handler handlers x*)
+            (map #(prewalk-exprs f %) x*)))))
     x))
+
+(defn macroexpand-all
+  ([x]
+     (macroexpand-all (constantly true) x))
+  ([macro-predicate x]
+     (postwalk-exprs
+       #(if (-> % first term-descriptor macro-predicate)
+          (macroexpand %)
+          %)
+       x)))
+
+
