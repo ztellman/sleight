@@ -7,8 +7,7 @@
 ;;   You must not remove this notice, or any other, from this software.
 
 (ns leiningen.sleight
-  (:use
-    [leiningen.core main eval]))
+  (:require [leinjacker.eval :as eval]))
 
 (defn arguments [args]
   (if (and (first args)
@@ -38,18 +37,16 @@
          (map symbol)
          (map (fn [ns] `(require '~ns))))))
 
-(defn switch-eval-in-project [{:keys [transforms namespaces]}]
-  (alter-var-root #'leiningen.core.eval/eval-in-project
-    (fn [eval-in-project]
-      (fn [& [project form pre-form]]
-        (eval-in-project
-          (update-project-dependencies project)
-          `(do
-             ~(switch-form transforms namespaces)
-             ~form)
-          `(do
-             ~(load-form transforms)
-             ~pre-form))))))
+(defn new-eval-in-project [{:keys [transforms namespaces]}]
+  (fn [eip project form pre-form]
+    (eip
+      (update-project-dependencies project)
+      `(do
+         ~(switch-form transforms namespaces)
+         ~form)
+      `(do
+         ~(load-form transforms)
+         ~pre-form))))
 
 (defn add-built-ins [sleight-options]
   (merge
@@ -66,9 +63,11 @@
 
     ;; make sure the reader switch occurs in the sub-task
     (if transform
-      (switch-eval-in-project transform)
+      (-> transform
+        new-eval-in-project
+        eval/hook-eval-in-project)
       (println (str "No sleight transform defined for " (keyword transform-name) ", skipping.")))
 
     ;; run the sub-task
-    (apply (resolve-task task) project args)))
+    (eval/apply-task task project args)))
 
