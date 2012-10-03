@@ -7,7 +7,8 @@
 ;;   You must not remove this notice, or any other, from this software.
 
 (ns leiningen.sleight
-  (:require [leinjacker.eval :as eval]))
+  (:require [leinjacker.eval :as eval]
+            [leiningen.core.project :as project]))
 
 (defn arguments [args]
   (if (and (first args)
@@ -15,12 +16,14 @@
     [(.substring (first args) 1) (second args) (drop 2 args)]
     ["default" (first args) (rest args)]))
 
-(defn update-project-dependencies [project]
-  (update-in project [:dependencies]
-    (fn [dependencies]
-      (if (->> dependencies (map first) (some #{'sleight}))
-        dependencies
-        (conj dependencies ['sleight "0.2.0-SNAPSHOT"])))))
+(defn update-project-dependencies
+  [project]
+  (let [profile-name (-> (gensym) name keyword)
+        added-profile (project/add-profiles project
+                                            {profile-name
+                                             {:dependencies [['sleight "0.2.0-SNAPSHOT"]]}})
+        merged-profile (project/merge-profiles added-profile [profile-name])]
+    merged-profile))
 
 (defn switch-form [transforms namespaces]
   `(sleight.core/switch-reader
@@ -40,7 +43,7 @@
 (defn new-eval-in-project [{:keys [transforms namespaces]}]
   (fn [eip project form pre-form]
     (eip
-      (update-project-dependencies project)
+      project
       `(do
          ~(switch-form transforms namespaces)
          ~form)
@@ -69,5 +72,5 @@
       (println (str "No sleight transform defined for " (keyword transform-name) ", skipping.")))
 
     ;; run the sub-task
-    (eval/apply-task task project args)))
+    (eval/apply-task task (update-project-dependencies project) args)))
 
