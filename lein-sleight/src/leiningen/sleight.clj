@@ -8,7 +8,7 @@
 
 (ns leiningen.sleight
   (:require [leinjacker.eval :as eval]
-            [leiningen.core.project :as project]))
+            [leinjacker.utils :as utils]))
 
 (defn arguments [args]
   (if (and (first args)
@@ -18,12 +18,7 @@
 
 (defn update-project-dependencies
   [project]
-  (let [profile-name (-> (gensym) name keyword)
-        added-profile (project/add-profiles project
-                                            {profile-name
-                                             {:dependencies [['sleight "0.2.0-SNAPSHOT"]]}})
-        merged-profile (project/merge-profiles added-profile [profile-name])]
-    merged-profile))
+  (utils/merge-projects project {:dependencies [['sleight "0.2.0-SNAPSHOT"]]}))
 
 (defn switch-form [transforms namespaces]
   `(sleight.core/switch-reader
