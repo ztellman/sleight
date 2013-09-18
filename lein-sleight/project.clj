@@ -2,4 +2,4 @@
   :description "A plugin for whole-program transformations via sleight"
   :license {:name "MIT License"}
   :eval-in-leiningen true
-  :dependencies [[leinjacker "0.3.3"]]) 
+  :dependencies [[leinjacker "0.4.1"]]) 

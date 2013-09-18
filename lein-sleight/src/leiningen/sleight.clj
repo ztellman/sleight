@@ -14,10 +14,12 @@
   (utils/merge-projects project {:dependencies [['sleight "0.2.0-SNAPSHOT"]]}))
 
 (defn switch-form [transforms namespaces]
-  `(sleight.core/wrap-reader
-     (sleight.core/merge-transforms
-       ~transforms
-       ~namespaces)))
+  `(do
+     (sleight.core/unwrap-reader)
+     (sleight.core/wrap-reader
+       (sleight.core/merge-transforms
+         ~transforms
+         ~namespaces))))
 
 (defn load-form [transforms]
   `(do
