@@ -20,9 +20,9 @@ Maybe!
 
 Sleight can be used via the `lein-sleight` plugin.
 
-To use in all projects, add `[lein-sleight "0.2.0-SNAPSHOT"]` to the `:plugins` vector of your `:user` profile in `~/.lein/profiles.clj`.  
+To use in all projects, add `[lein-sleight "0.2.0"]` to the `:plugins` vector of your `:user` profile in `~/.lein/profiles.clj`.  
 
-To use for a specific project, add `[lein-sleight "0.2.0-SNAPSHOT"]` to the `:plugins` vector in `project.clj`.
+To use for a specific project, add `[lein-sleight "0.2.0"]` to the `:plugins` vector in `project.clj`.
 
 ---
 
@@ -43,9 +43,9 @@ Then, in your `project.clj`, add something like this:
 
 ```clj
 (project your-project "1.0.0"
-  :sleight {:default {:transforms [a.namespace/reverse-everything]}
-            :partial {:transforms [a.namespace/reverse-everything]
-	              :namespaces ["another.namespace*"]}})
+  :sleight {:default {:transforms [a.namespace/reverse-vectors]}
+            :partial {:transforms [a.namespace/reverse-vectors]
+                      :namespaces ["another.namespace*"]}})
 ```
 
 The `:transforms` key maps onto a list of transforms, which are applied left to right.  The `:namespaces` key maps onto a list of namespace filters, which confines the transformation to namespaces which match one of the filters.
