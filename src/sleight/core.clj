@@ -1,11 +1,3 @@
-;;   Copyright (c) Zachary Tellman. All rights reserved.
-;;   The use and distribution terms for this software are covered by the
-;;   Eclipse Public License 1.0 (http://opensource.org/licenses/eclipse-1.0.php)
-;;   which can be found in the file epl-v10.html at the root of this distribution.
-;;   By using this software in any fashion, you are agreeing to be bound by
-;;   the terms of this license.
-;;   You must not remove this notice, or any other, from this software.
-
 (ns sleight.core
   (:require
     [sleight.rt :as rt]))
@@ -55,6 +47,10 @@
       transform)))
 
 (defn merge-transforms
+  "Given a list of transform descriptors and namespaces in which they should be applied,
+   returns a merged descriptor which will only transform code within the specified namespaces.
+
+   If `namespaces` is nil, transforms will be applied to all namespaces."
   [transforms namespaces]
   (->> transforms
     (map #(update-in % [:transform] (partial filtered-transform namespaces)))
@@ -65,7 +61,11 @@
          :transform (merge-functions comp (:transform b) (:transform a))})
       {})))
 
-(defn switch-reader
+(defn wrap-reader
+  "Takes a descriptor of a code transform consisting of a `:pre` no-arg callback that is
+   invoked before the transform, a `:transform` function which takes a form and returns
+   a modified form, and a `:post` no-arg callback which is invoked when the process is
+   terminated.  All values are optional."
   [{:keys [pre post transform]}]
 
   (when pre
@@ -85,13 +85,11 @@
     (.addShutdownHook (Runtime/getRuntime)
       (Thread. post))))
 
-(defn unswitch-reader
+(defn unwrap-reader
+  "Returns the reader to its original state, undoing all invocations to wrap-reader."
   []
   (alter-var-root #'clojure.core/load (constantly original-load))
   (alter-var-root #'clojure.core/eval (constantly original-eval)))
 
-(defmacro def-transform [name & {:as options}]
-  `(def ~name ~options))
-
-(def-transform identity-transform
-  :transform identity)
+(def identity-transform
+  {:transform identity})
