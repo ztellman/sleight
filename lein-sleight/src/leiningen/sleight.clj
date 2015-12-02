@@ -11,7 +11,7 @@
 
 (defn update-project-dependencies
   [project]
-  (utils/merge-projects project {:dependencies [['sleight "0.2.0-SNAPSHOT"]]}))
+  (utils/merge-projects project {:dependencies [['sleight "0.2.1"]]}))
 
 (defn switch-form [transforms namespaces]
   `(do
@@ -63,4 +63,3 @@
 
     ;; run the sub-task
     (eval/apply-task task (update-project-dependencies project) args)))
-
