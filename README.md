@@ -18,11 +18,11 @@ Maybe!
 
 ### how do I use it?
 
-Sleight can be used via the `lein-sleight` plugin.
+Sleight can be used via the `lein-sleight` plugin, and currently does not work with Clojure versions later than 1.7.0.
 
-To use in all projects, add `[lein-sleight "0.2.0"]` to the `:plugins` vector of your `:user` profile in `~/.lein/profiles.clj`.  
+To use in all projects, add `[lein-sleight "0.2.1"]` to the `:plugins` vector of your `:user` profile in `~/.lein/profiles.clj`.
 
-To use for a specific project, add `[lein-sleight "0.2.0"]` to the `:plugins` vector in `project.clj`.
+To use for a specific project, add `[lein-sleight "0.2.1"]` to the `:plugins` vector in `project.clj`.
 
 ---
 
