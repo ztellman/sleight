@@ -10,3 +10,4 @@ target/**
 DS_Store
 push
 *.nrepl*
+*pom.xml.asc

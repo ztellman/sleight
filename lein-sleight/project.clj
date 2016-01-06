@@ -1,4 +1,4 @@
-(defproject lein-sleight "0.2.1"
+(defproject lein-sleight "0.2.2"
   :description "A plugin for whole-program transformations via sleight"
   :license {:name "MIT License"}
   :eval-in-leiningen true

@@ -11,7 +11,7 @@
 
 (defn update-project-dependencies
   [project]
-  (utils/merge-projects project {:dependencies [['sleight "0.2.1"]]}))
+  (utils/merge-projects project {:dependencies [['sleight "0.2.2"]]}))
 
 (defn switch-form [transforms namespaces]
   `(do

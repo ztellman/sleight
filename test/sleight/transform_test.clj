@@ -4,7 +4,6 @@
 
 (def make-odd
   {:transform (fn [x]
-                (prn x)
                 (r/walk-exprs
                   #(and (number? %) (even? %))
                   inc
